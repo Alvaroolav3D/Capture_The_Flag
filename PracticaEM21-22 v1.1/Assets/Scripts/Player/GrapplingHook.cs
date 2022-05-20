@@ -7,7 +7,7 @@ public class GrapplingHook : NetworkBehaviour
 
     InputHandler handler;
     // https://docs.unity3d.com/2020.3/Documentation/ScriptReference/DistanceJoint2D.html
-    DistanceJoint2D rope;
+    DistanceJoint2D rope; //te permite hacer fisicas de rotacion efecto bisagra...
     // // https://docs.unity3d.com/2020.3/Documentation/ScriptReference/LineRenderer.html
     LineRenderer ropeRenderer;
     Transform playerTransform;
@@ -103,6 +103,7 @@ public class GrapplingHook : NetworkBehaviour
     [ServerRpc]
     void JumpPerformedServerRpc()
     {
+        //si yo estoy en el garfio y salto suelto el garfio
         RemoveRopeClientRpc();
         rope.enabled = false;
         ropeRenderer.enabled = false;
@@ -128,6 +129,7 @@ public class GrapplingHook : NetworkBehaviour
     [ServerRpc]
     void SwingRopeServerRpc(Vector2 input)
     {
+        //balanceo de la cuerda
         if (player.State.Value == PlayerState.Hooked)
         {
             // Player 2 hook direction
@@ -186,6 +188,7 @@ public class GrapplingHook : NetworkBehaviour
 
     void ClimbRope(float input)
     {
+        //hacer mas corto o largo la cuerda
         ropeDistance.Value = (input) * climbSpeed * Time.deltaTime;
     }
 

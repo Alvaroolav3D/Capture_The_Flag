@@ -54,8 +54,7 @@ public class WeaponAim : NetworkBehaviour
 
     void UpdateWeaponOrientation()
     {
-        weapon.right = crossHair.position - weapon.position;
-
+        weapon.right = crossHair.position - weapon.position; //vector que orienta cuando hacer que flip
         if (crossHair.localPosition.x > 0)
         {
             weaponRenderer.flipY = false;

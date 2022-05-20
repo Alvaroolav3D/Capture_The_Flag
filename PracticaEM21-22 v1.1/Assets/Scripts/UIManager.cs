@@ -60,7 +60,7 @@ public class UIManager : MonoBehaviour
         inGameHUD.SetActive(true);
 
         // for test purposes
-        UpdateLifeUI(Random.Range(1, 6));
+        UpdateLifeUI(Random.Range(1, 6)); //aqui tendria que meter la vida que tiene el player en cuestion
     }
 
     public void UpdateLifeUI(int hitpoints)

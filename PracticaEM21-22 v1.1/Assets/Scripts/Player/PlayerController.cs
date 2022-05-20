@@ -18,10 +18,10 @@ public class PlayerController : NetworkBehaviour
     readonly int maxJumps = 2;
 
     LayerMask _layer;
-    int _jumpsLeft;
+    int _jumpsLeft; //numero de saltos restantes
 
     // https://docs.unity3d.com/2020.3/Documentation/ScriptReference/ContactFilter2D.html
-    ContactFilter2D filter;
+    ContactFilter2D filter; //permite definir como quiero y hacer contacto entre distintos colliders
     InputHandler handler;
     Player player;
     Rigidbody2D rb;
@@ -30,7 +30,7 @@ public class PlayerController : NetworkBehaviour
     SpriteRenderer spriteRenderer;
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
-    NetworkVariable<bool> FlipSprite;
+    NetworkVariable<bool> FlipSprite; //determina a que direccion mira el jugador
 
     #endregion
 
@@ -38,6 +38,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        //inicializo variables
         rb = GetComponent<Rigidbody2D>();
         collider = GetComponent<CapsuleCollider2D>();
         handler = GetComponent<InputHandler>();
@@ -50,6 +51,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnEnable()
     {
+        //nos suscribimos a los metodos
         handler.OnMove.AddListener(UpdatePlayerVisualsServerRpc);
         handler.OnJump.AddListener(PerformJumpServerRpc);
         handler.OnMoveFixedUpdate.AddListener(UpdatePlayerPositionServerRpc);
@@ -70,17 +72,18 @@ public class PlayerController : NetworkBehaviour
     {
         // Configure Rigidbody2D
         rb.freezeRotation = true;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; //asi no se atraviesan los objetos
         rb.gravityScale = gravity;
 
         // Configure LayerMask
-        _layer = LayerMask.GetMask("Obstacles");
+        _layer = LayerMask.GetMask("Obstacles"); //capa con la que quiero que mi personaje tenga colisiones.
 
         // Configure ContactFilter2D
         filter.minNormalAngle = 45;
         filter.maxNormalAngle = 135;
         filter.useNormalAngle = true;
-        filter.layerMask = _layer;
+        filter.layerMask = _layer; //el contact filter solo se va a aplicar a la capa layer que en este caso es obstacles
+
     }
 
     #endregion
@@ -93,7 +96,8 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     void UpdatePlayerVisualsServerRpc(Vector2 input)
     {
-        UpdateAnimatorStateServerRpc();
+        //funcion que actualiza lo visual del jugador, como su animacion o su orientacion
+        UpdateAnimatorStateServerRpc(); //no hay necesidad de que sea ServerRpc ya que la funcion que lo usa ya lo es
         UpdateSpriteOrientation(input);
     }
 
@@ -114,7 +118,7 @@ public class PlayerController : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/message-system/serverrpc
     [ServerRpc]
-    void PerformJumpServerRpc()
+    void PerformJumpServerRpc() //arreglar a veces salta 3 veces porque considera en teoria que ya esta grounded
     {
         if (player.State.Value == PlayerState.Grounded)
         {

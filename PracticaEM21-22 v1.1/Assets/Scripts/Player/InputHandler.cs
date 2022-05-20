@@ -24,7 +24,8 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent OnJump;
     public UnityEvent OnFire;
 
-    Vector2 CachedMoveInput { get; set; }
+    //valor para la informacion del input cacheada para que cuando juegue con el jugador a eces necesitamos hacer actualizaciones en el update o en el fixedupdate
+    Vector2 CachedMoveInput { get; set; } 
 
     #endregion
 
@@ -32,6 +33,7 @@ public class InputHandler : NetworkBehaviour
 
     private void Awake()
     {
+        //Inicializo los bindings de los inputActions
         _move.AddCompositeBinding("2DVector")
             .With("Up", "<Keyboard>/w")
             .With("Left", "<Keyboard>/a")
@@ -64,12 +66,13 @@ public class InputHandler : NetworkBehaviour
 
     private void Update()
     {
+        //solo se ejecuta este update en todo player
         if (IsLocalPlayer)
         {
             CachedMoveInput = _move.ReadValue<Vector2>();
             var mousePosition = _mousePosition.ReadValue<Vector2>();
 
-            var hookPerformed = _hook.WasPerformedThisFrame();
+            var hookPerformed = _hook.WasPerformedThisFrame(); 
             var jumpPerformed = _jump.WasPerformedThisFrame();
 
             Move(CachedMoveInput);
@@ -88,13 +91,14 @@ public class InputHandler : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        //solo se ejecuta este fixedUpdate en todo player
         MoveFixedUpdate(CachedMoveInput);
     }
 
     #endregion
 
     #region InputSystem Related Methods
-
+    //todos estos delegados reciben los metodos en playercontrolles.cs. Aqui simplemente se estan llamando con el valor de movimiento.
     void Move(Vector2 input)
     {
         OnMove?.Invoke(input);
