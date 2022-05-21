@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using System.Text;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,10 +13,16 @@ public class UIManager : MonoBehaviour
     #region Variables
 
     [SerializeField] NetworkManager networkManager;
+    [SerializeField] GameManager gameManager;
     UnityTransport transport;
     readonly ushort port = 7777;
 
     [SerializeField] Sprite[] hearts = new Sprite[3];
+
+    [Header("Password Menu")]
+    [SerializeField] private GameObject passwordMenu;
+    [SerializeField] private InputField passwordInputField;
+    [SerializeField] private Button buttonPasswordAprove;
 
     [Header("Main Menu")]
     [SerializeField] private GameObject mainMenu;
@@ -48,14 +56,23 @@ public class UIManager : MonoBehaviour
 
     #region UI Related Methods
 
+    private void ActivatePasswordMenu()
+    {
+        passwordMenu.SetActive(true);
+        mainMenu.SetActive(false);
+        inGameHUD.SetActive(false);
+    }
+
     private void ActivateMainMenu()
     {
+        passwordMenu.SetActive(false);
         mainMenu.SetActive(true);
         inGameHUD.SetActive(false);
     }
 
     private void ActivateInGameHUD()
     {
+        passwordMenu.SetActive(false);
         mainMenu.SetActive(false);
         inGameHUD.SetActive(true);
 
@@ -106,12 +123,14 @@ public class UIManager : MonoBehaviour
 
     private void StartHost()
     {
+        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartHost();
         ActivateInGameHUD();
     }
 
     private void StartClient()
     {
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.ASCII.GetBytes(passwordInputField.text);
         var ip = inputFieldIP.text;
         if (!string.IsNullOrEmpty(ip))
         {
@@ -123,8 +142,19 @@ public class UIManager : MonoBehaviour
 
     private void StartServer()
     {
+        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartServer();
         ActivateInGameHUD();
+    }
+
+    private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback) //aprovalcheck de MLAPI
+    {
+        string password = Encoding.ASCII.GetString(connectionData);
+        bool approveConnection = password == passwordInputField.text;
+
+        Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; //posicion aleatoria del array de spawnpoints del game manager
+        print(position);
+        callback(true, null, approveConnection, position, null); //aqui iria en que posicion spawnearia, ...
     }
 
     #endregion

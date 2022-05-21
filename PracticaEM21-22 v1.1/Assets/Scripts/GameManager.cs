@@ -5,5 +5,5 @@ using Unity.Netcode;
 
 public class GameManager : MonoBehaviour
 {
-
+    public List<Transform> spawnPoints;
 }

@@ -10,7 +10,7 @@ public class Player : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     public NetworkVariable<PlayerState> State;
-    List<Vector3> spawnPositions;
+    //NetworkVariable<FixedString64bytes>
 
     #endregion
 
@@ -22,7 +22,6 @@ public class Player : NetworkBehaviour
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
 
         State = new NetworkVariable<PlayerState>();
-        spawnPositions = new List<Vector3>();
     }
 
     private void OnEnable()
@@ -58,13 +57,6 @@ public class Player : NetworkBehaviour
     void ConfigurePlayer()
     {
         //le doy un valor inicial al jugador de Grounded
-
-        //spawnPositions.Add(new Vector3(-8.0f, -2.893f, transform.position.z));
-        //spawnPositions.Add(new Vector3(-5.0f, 0.93f, transform.position.z));
-        //spawnPositions.Add(new Vector3(-0.2804f, -0.4019f, transform.position.z));
-        //spawnPositions.Add(new Vector3(10.4f, -0.15f, transform.position.z));
-
-        //transform.position = spawnPositions[Random.Range(0, spawnPositions.Count - 1)];
         UpdatePlayerStateServerRpc(PlayerState.Grounded);
     }
 
