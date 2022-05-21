@@ -150,11 +150,12 @@ public class UIManager : MonoBehaviour
     private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback) //aprovalcheck de MLAPI
     {
         string password = Encoding.ASCII.GetString(connectionData);
-        bool approveConnection = password == passwordInputField.text;
+        bool approveConnection = password == passwordInputField.text; //determino si la contraseña introducida es la misma que la del servidor
+        bool emptyPlaceInGame = NetworkManager.Singleton.ConnectedClients.Count < gameManager.maxPlayers; //determino si el numero de jugadores es menor que el maximo permitido
 
         Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; //posicion aleatoria del array de spawnpoints del game manager
-        print(position);
-        callback(true, null, approveConnection, position, null); //aqui iria en que posicion spawnearia, ...
+
+        callback(emptyPlaceInGame, null, approveConnection, position, null); //callback del delegado ConnectionApprovedDelegate
     }
 
     #endregion
