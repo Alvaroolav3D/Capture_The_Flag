@@ -74,16 +74,17 @@ public class InputHandler : NetworkBehaviour
 
             var hookPerformed = _hook.WasPerformedThisFrame(); 
             var jumpPerformed = _jump.WasPerformedThisFrame();
+            var firePerformed = _fire.WasPerformedThisFrame();
 
             Move(CachedMoveInput);
             MousePosition(mousePosition);
 
             // https://docs.unity3d.com/2020.3/Documentation/ScriptReference/Camera.ScreenToWorldPoint.html
             var screenPoint = Camera.main.ScreenToWorldPoint(mousePosition);
-            if (hookPerformed) { Hook(screenPoint); }
 
+            if (hookPerformed) { Hook(screenPoint); }
             if (jumpPerformed) { Jump(); }
-            if (_fire.WasPerformedThisFrame()) { Fire(); }
+            if (firePerformed) { Fire(); }
 
             HookRender(CachedMoveInput);
         }
