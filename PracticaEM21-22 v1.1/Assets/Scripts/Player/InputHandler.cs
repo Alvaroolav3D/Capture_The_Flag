@@ -22,7 +22,7 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent<Vector2> OnHook;
     public UnityEvent<Vector2> OnHookRender;
     public UnityEvent OnJump;
-    public UnityEvent OnFire;
+    public UnityEvent<Vector2> OnFire;
 
     //valor para la informacion del input cacheada para que cuando juegue con el jugador a eces necesitamos hacer actualizaciones en el update o en el fixedupdate
     Vector2 CachedMoveInput { get; set; } 
@@ -84,7 +84,7 @@ public class InputHandler : NetworkBehaviour
 
             if (hookPerformed) { Hook(screenPoint); }
             if (jumpPerformed) { Jump(); }
-            if (firePerformed) { Fire(); }
+            if (firePerformed) { Fire(screenPoint); }
 
             HookRender(CachedMoveInput);
         }
@@ -125,9 +125,9 @@ public class InputHandler : NetworkBehaviour
         OnHookRender?.Invoke(input);
     }
 
-    void Fire()
+    void Fire(Vector2 input)
     {
-        OnFire?.Invoke();
+        OnFire?.Invoke(input);
     }
 
     void MousePosition(Vector2 input)

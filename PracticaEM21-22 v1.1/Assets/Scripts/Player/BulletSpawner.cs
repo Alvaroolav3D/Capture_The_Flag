@@ -5,12 +5,35 @@ using UnityEngine;
 
 public class BulletSpawner : NetworkBehaviour
 {
-    [SerializeField] private NetworkObject ballPrefab;
+    [SerializeField] public NetworkObject bulletPrefab;
+    InputHandler handler;
+    Player player;
 
-    private Camera mainCamera;
-
-    private void Start()
+    private void Awake()
     {
-        mainCamera = Camera.main;
+        handler = GetComponent<InputHandler>();
+        player = GetComponent<Player>();
+    }
+    private void OnEnable()
+    {
+        handler.OnFire.AddListener(SpawnBulletServerRpc);
+    }
+
+    private void OnDisable()
+    {
+        handler.OnFire.RemoveListener(SpawnBulletServerRpc);
+    }
+
+    [ServerRpc]
+    void SpawnBulletServerRpc(Vector2 spawnPos)
+    {
+        //en este punto solo el servidor seria consciente de que se ha spawneado una bala en spawnPos, no los clientes
+        NetworkObject ballInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
+
+        ballInstance.GetComponent<Bullet>().mouseposition = spawnPos;
+        ballInstance.GetComponent<Bullet>().playerId = OwnerClientId;
+
+        //spawneo la bala en los clientes
+        ballInstance.SpawnWithOwnership(OwnerClientId);
     }
 }

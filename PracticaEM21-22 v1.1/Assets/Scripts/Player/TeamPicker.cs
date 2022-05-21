@@ -10,7 +10,7 @@ public class TeamPicker : MonoBehaviour
         //variable utilizada para selecciona al cliente con esta id
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
 
-        var players = GameObject.FindGameObjectsWithTag("Player");
+        var players = GameObject.FindGameObjectsWithTag("Player"); //utilizo esto debido a que lo comentado abajo no funciona por ser cliente :(
 
         GameObject client;
 
