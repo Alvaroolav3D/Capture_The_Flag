@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 2569724402085557493}
   - component: {fileID: 527013784210057118}
   - component: {fileID: 418801855643455155}
+  - component: {fileID: 3370225869385063881}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -222,7 +223,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   State:
     m_InternalValue: 0
-  PlayerText: {fileID: 0}
 --- !u!114 &169404036177825696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,3 +502,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 528230145}
+--- !u!114 &3370225869385063881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5644749167613886767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3fa1609790611044b6c2882eb56683f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamColourRenderer: {fileID: 5644749167613886766}
+  teamColours:
+  - {r: 1, g: 0.30980393, b: 0.30980393, a: 1}
+  - {r: 0.30980393, g: 1, b: 0.41960788, a: 1}
+  - {r: 0.30980393, g: 0.65882355, b: 1, a: 1}
+  - {r: 0.9058824, g: 0.30980393, b: 1, a: 1}
