@@ -19,17 +19,31 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Sprite[] hearts = new Sprite[3];
 
-    [Header("Password Menu")]
-    [SerializeField] private GameObject passwordMenu;
-    [SerializeField] private InputField passwordInputField;
-    [SerializeField] private Button buttonPasswordAprove;
 
     [Header("Main Menu")]
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private Button goHostMenu;
+    [SerializeField] private Button goServerMenu;
+    [SerializeField] private Button goClientMenu;
+
+    [SerializeField] private GameObject backMenu;
+    [SerializeField] private Button goBack;
+
+    [Header("Host Menu")]
+    [SerializeField] private GameObject hostMenu;
+    [SerializeField] private InputField hostPasswordInputField;
     [SerializeField] private Button buttonHost;
-    [SerializeField] private Button buttonClient;
+
+    [Header("Server Menu")]
+    [SerializeField] private GameObject serverMenu;
+    [SerializeField] private InputField serverPasswordInputField;
     [SerializeField] private Button buttonServer;
+
+    [Header("Client Menu")]
+    [SerializeField] private GameObject clientMenu;
     [SerializeField] private InputField inputFieldIP;
+    [SerializeField] private InputField clientPasswordInputField;
+    [SerializeField] private Button buttonClient;
 
     [Header("In-Game HUD")]
     [SerializeField] private GameObject inGameHUD;
@@ -46,9 +60,16 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        goHostMenu.onClick.AddListener(() => ActivateHostMenu());
+        goServerMenu.onClick.AddListener(() => ActivateServerMenu());
+        goClientMenu.onClick.AddListener(() => ActivateClientMenu());
+        goBack.onClick.AddListener(() => ActivateMainMenu());
+
+        
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonServer.onClick.AddListener(() => StartServer());
+
         ActivateMainMenu();
     }
 
@@ -56,24 +77,57 @@ public class UIManager : MonoBehaviour
 
     #region UI Related Methods
 
-    private void ActivatePasswordMenu()
+    private void ActivateMainMenu()
     {
-        passwordMenu.SetActive(true);
-        mainMenu.SetActive(false);
+        mainMenu.SetActive(true);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(false);
+
         inGameHUD.SetActive(false);
     }
 
-    private void ActivateMainMenu()
+    private void ActivateHostMenu()
     {
-        passwordMenu.SetActive(false);
-        mainMenu.SetActive(true);
+        mainMenu.SetActive(false);
+        hostMenu.SetActive(true);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(true);
+
+        inGameHUD.SetActive(false);
+    }
+
+    private void ActivateServerMenu()
+    {
+        mainMenu.SetActive(false);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(true);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(true);
+
+        inGameHUD.SetActive(false);
+    }
+    private void ActivateClientMenu()
+    {
+        mainMenu.SetActive(false);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(true);
+        backMenu.SetActive(true);
+
         inGameHUD.SetActive(false);
     }
 
     private void ActivateInGameHUD()
     {
-        passwordMenu.SetActive(false);
         mainMenu.SetActive(false);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(false);
+
         inGameHUD.SetActive(true);
 
         // for test purposes
@@ -130,7 +184,7 @@ public class UIManager : MonoBehaviour
 
     private void StartClient()
     {
-        NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.ASCII.GetBytes(passwordInputField.text);
+        NetworkManager.Singleton.NetworkConfig.ConnectionData = Encoding.ASCII.GetBytes(clientPasswordInputField.text);
         var ip = inputFieldIP.text;
         if (!string.IsNullOrEmpty(ip))
         {
@@ -150,7 +204,7 @@ public class UIManager : MonoBehaviour
     private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback) //aprovalcheck de MLAPI
     {
         string password = Encoding.ASCII.GetString(connectionData);
-        bool approveConnection = password == passwordInputField.text; //determino si la contraseña introducida es la misma que la del servidor
+        bool approveConnection = (password == hostPasswordInputField.text) || (password == serverPasswordInputField.text); //determino si la contraseña introducida es la misma que la del servidor
         bool emptyPlaceInGame = NetworkManager.Singleton.ConnectedClients.Count < gameManager.maxPlayers; //determino si el numero de jugadores es menor que el maximo permitido
 
         Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; //posicion aleatoria del array de spawnpoints del game manager
