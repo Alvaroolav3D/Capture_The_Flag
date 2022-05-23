@@ -185,10 +185,13 @@ public class PlayerController : NetworkBehaviour
     public void OnHitPointsValueChanged(int previous, int current)
     {
         hitPoints.Value = current;
-        //el problema de llamarlo aqui es que cada vez que alguien de la partida pierde vida se cambia el ui
-        uiManager.UpdateLifeUI(hitPoints.Value); 
     }
 
+    [ClientRpc]
+    void UpdateUIClientRpc()
+    {
+        uiManager.UpdateLifeUI(hitPoints.Value);
+    }
 
     bool IsGrounded => collider.IsTouching(filter);
 

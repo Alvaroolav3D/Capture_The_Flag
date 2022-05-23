@@ -37,28 +37,18 @@ public class Bullet : NetworkBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        if (IsServer)
+        {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (!IsClient) //lo clientes no pueden modificar los valores de una networkvariable por eso es necesario restringir el acceso
+            var player = collision.gameObject;
+            if (player.GetComponent<TeamPlayer>().teamId.Value != teamId || player.GetComponent<TeamPlayer>().teamId.Value == 0)
             {
-                var player = collision.gameObject;
-                if (player.GetComponent<TeamPlayer>().teamId.Value == teamId || player.GetComponent<TeamPlayer>().teamId.Value == 0)
-                {
-                    var currentHitPoints = player.GetComponent<PlayerController>().hitPoints.Value;
-                    player.GetComponent<PlayerController>().OnHitPointsValueChanged(currentHitPoints, currentHitPoints - damage);
-                }
+                var currentHitPoints = player.GetComponent<PlayerController>().hitPoints.Value;
+                player.GetComponent<PlayerController>().OnHitPointsValueChanged(currentHitPoints, currentHitPoints - damage);
             }
         }
-        if (IsOwner)
-        {
-            DestroyBulletServerRpc();
+            gameObject.GetComponent<NetworkObject>().Despawn();
         }
-    }
-
-    [ServerRpc]
-    private void DestroyBulletServerRpc()
-    {
-        //Destruyendo un networkObject en el servidor el objeto se destruye en todos los clientes
-        Destroy(gameObject);
     }
 }

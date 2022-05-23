@@ -198,7 +198,7 @@ MonoBehaviour:
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
-  Interpolate: 1
+  Interpolate: 0
 --- !u!58 &3877502575245556980
 CircleCollider2D:
   m_ObjectHideFlags: 0

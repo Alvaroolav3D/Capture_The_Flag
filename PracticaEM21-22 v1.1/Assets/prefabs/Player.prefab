@@ -314,6 +314,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6e6c65243d1b4949a40b6704489359d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitPoints:
+    m_InternalValue: 0
 --- !u!114 &8835148374866897493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,7 +491,7 @@ MonoBehaviour:
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
-  Interpolate: 1
+  Interpolate: 0
 --- !u!114 &418801855643455155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -522,6 +524,8 @@ MonoBehaviour:
   - {r: 0.30980393, g: 1, b: 0.41960788, a: 1}
   - {r: 0.30980393, g: 0.65882355, b: 1, a: 1}
   - {r: 0.9058824, g: 0.30980393, b: 1, a: 1}
+  teamId:
+    m_InternalValue: 0
 --- !u!114 &7053376381890207714
 MonoBehaviour:
   m_ObjectHideFlags: 0
