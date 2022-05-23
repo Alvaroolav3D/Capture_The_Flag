@@ -25,12 +25,12 @@ public class BulletSpawner : NetworkBehaviour
     }
 
     [ServerRpc]
-    void SpawnBulletServerRpc(Vector2 spawnPos)
+    void SpawnBulletServerRpc(Vector2 mousePos)
     {
         //en este punto solo el servidor seria consciente de que se ha spawneado una bala en spawnPos, no los clientes
         NetworkObject ballInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
 
-        ballInstance.GetComponent<Bullet>().mouseposition = spawnPos;
+        ballInstance.GetComponent<Bullet>().mouseposition = mousePos;
         ballInstance.GetComponent<Bullet>().playerId = OwnerClientId;
 
         //spawneo la bala en los clientes

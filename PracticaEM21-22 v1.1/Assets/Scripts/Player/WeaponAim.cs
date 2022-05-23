@@ -6,7 +6,7 @@ public class WeaponAim : NetworkBehaviour
 
     #region Variables
 
-    [SerializeField] Transform crossHair;
+    [SerializeField] public Transform crossHair;
     [SerializeField] Transform weapon;
     SpriteRenderer weaponRenderer;
     InputHandler handler;

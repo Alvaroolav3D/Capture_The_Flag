@@ -10,7 +10,7 @@ public class TeamPlayer : NetworkBehaviour
     //el teamColours[0] queda reservado para un jugador sin equipo
     //los 4 indices siguientes son los equipos y el jugador cambiara de color
 
-    private NetworkVariable<byte> teamId = new NetworkVariable<byte>(); //para que una nertworkvariable funciones necesito que herede de networkBehabiour
+    public NetworkVariable<byte> teamId = new NetworkVariable<byte>(); //para que una nertworkvariable funciones necesito que herede de networkBehabiour
 
     private void OnEnable()
     {

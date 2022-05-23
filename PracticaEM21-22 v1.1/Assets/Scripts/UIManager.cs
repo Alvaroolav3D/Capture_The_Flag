@@ -87,7 +87,6 @@ public class UIManager : MonoBehaviour
 
         inGameHUD.SetActive(false);
     }
-
     private void ActivateHostMenu()
     {
         mainMenu.SetActive(false);
@@ -98,7 +97,6 @@ public class UIManager : MonoBehaviour
 
         inGameHUD.SetActive(false);
     }
-
     private void ActivateServerMenu()
     {
         mainMenu.SetActive(false);
@@ -129,44 +127,46 @@ public class UIManager : MonoBehaviour
         backMenu.SetActive(false);
 
         inGameHUD.SetActive(true);
-
-        // for test purposes
-        UpdateLifeUI(Random.Range(1, 6)); //aqui tendria que meter la vida que tiene el player en cuestion
     }
 
     public void UpdateLifeUI(int hitpoints)
     {
         switch (hitpoints)
         {
-            case 6:
+            case 6: // 3 corazones completos
+                heartsUI[0].texture = hearts[0].texture;
+                heartsUI[1].texture = hearts[0].texture;
+                heartsUI[2].texture = hearts[0].texture;
+                break;
+            case 5: // 2 corazones y medio
+                heartsUI[0].texture = hearts[1].texture;
+                heartsUI[1].texture = hearts[0].texture;
+                heartsUI[2].texture = hearts[0].texture;
+                break;
+            case 4: // 2 corazones
+                heartsUI[0].texture = hearts[2].texture;
+                heartsUI[1].texture = hearts[0].texture;
+                heartsUI[2].texture = hearts[0].texture;
+                break;
+            case 3: // 1 corazon y medio
+                heartsUI[0].texture = hearts[2].texture;
+                heartsUI[1].texture = hearts[1].texture;
+                heartsUI[2].texture = hearts[0].texture;
+                break;
+            case 2: // 1 corazon
+                heartsUI[0].texture = hearts[2].texture;
+                heartsUI[1].texture = hearts[2].texture;
+                heartsUI[2].texture = hearts[0].texture;
+                break;
+            case 1: // medio corazon
+                heartsUI[0].texture = hearts[2].texture;
+                heartsUI[1].texture = hearts[2].texture;
+                heartsUI[2].texture = hearts[1].texture;
+                break;
+            case 0: // muerto
                 heartsUI[0].texture = hearts[2].texture;
                 heartsUI[1].texture = hearts[2].texture;
                 heartsUI[2].texture = hearts[2].texture;
-                break;
-            case 5:
-                heartsUI[0].texture = hearts[1].texture;
-                heartsUI[1].texture = hearts[2].texture;
-                heartsUI[2].texture = hearts[2].texture;
-                break;
-            case 4:
-                heartsUI[0].texture = hearts[0].texture;
-                heartsUI[1].texture = hearts[2].texture;
-                heartsUI[2].texture = hearts[2].texture;
-                break;
-            case 3:
-                heartsUI[0].texture = hearts[0].texture;
-                heartsUI[1].texture = hearts[1].texture;
-                heartsUI[2].texture = hearts[2].texture;
-                break;
-            case 2:
-                heartsUI[0].texture = hearts[0].texture;
-                heartsUI[1].texture = hearts[0].texture;
-                heartsUI[2].texture = hearts[2].texture;
-                break;
-            case 1:
-                heartsUI[0].texture = hearts[0].texture;
-                heartsUI[1].texture = hearts[0].texture;
-                heartsUI[2].texture = hearts[1].texture;
                 break;
         }
     }

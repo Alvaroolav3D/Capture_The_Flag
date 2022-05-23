@@ -10,7 +10,7 @@ public class Player : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     public NetworkVariable<PlayerState> State;
-    //NetworkVariable<FixedString64bytes>
+    
 
     #endregion
 

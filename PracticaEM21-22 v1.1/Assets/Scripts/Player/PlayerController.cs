@@ -28,9 +28,11 @@ public class PlayerController : NetworkBehaviour
     new CapsuleCollider2D collider;
     Animator anim;
     SpriteRenderer spriteRenderer;
+    UIManager uiManager;
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     NetworkVariable<bool> FlipSprite; //determina a que direccion mira el jugador
+    public NetworkVariable<int> hitPoints; //determina a que direccion mira el jugador
 
     #endregion
 
@@ -47,6 +49,9 @@ public class PlayerController : NetworkBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         FlipSprite = new NetworkVariable<bool>();
+        hitPoints = new NetworkVariable<int>();
+
+        uiManager = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 
     private void OnEnable()
@@ -57,6 +62,7 @@ public class PlayerController : NetworkBehaviour
         handler.OnMoveFixedUpdate.AddListener(UpdatePlayerPositionServerRpc);
 
         FlipSprite.OnValueChanged += OnFlipSpriteValueChanged;
+        hitPoints.OnValueChanged += OnHitPointsValueChanged;
     }
 
     private void OnDisable()
@@ -66,6 +72,7 @@ public class PlayerController : NetworkBehaviour
         handler.OnMoveFixedUpdate.RemoveListener(UpdatePlayerPositionServerRpc);
 
         FlipSprite.OnValueChanged -= OnFlipSpriteValueChanged;
+        hitPoints.OnValueChanged -= OnHitPointsValueChanged;
     }
 
     void Start()
@@ -84,6 +91,8 @@ public class PlayerController : NetworkBehaviour
         filter.useNormalAngle = true;
         filter.layerMask = _layer; //el contact filter solo se va a aplicar a la capa layer que en este caso es obstacles
 
+        hitPoints.Value = 6;
+        uiManager.UpdateLifeUI(hitPoints.Value);
     }
 
     #endregion
@@ -172,6 +181,14 @@ public class PlayerController : NetworkBehaviour
     {
         spriteRenderer.flipX = current;
     }
+
+    public void OnHitPointsValueChanged(int previous, int current)
+    {
+        hitPoints.Value = current;
+        //el problema de llamarlo aqui es que cada vez que alguien de la partida pierde vida se cambia el ui
+        uiManager.UpdateLifeUI(hitPoints.Value); 
+    }
+
 
     bool IsGrounded => collider.IsTouching(filter);
 
