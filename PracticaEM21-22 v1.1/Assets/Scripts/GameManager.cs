@@ -7,14 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public int maxPlayers;
     public List<Transform> spawnPoints;
-
-    public UIManager uiManager;
-
-    public void Update()
-    {
-        uiManager.UpdateLifeUI(6);
-    }
-
 }
 
 public enum GameMode

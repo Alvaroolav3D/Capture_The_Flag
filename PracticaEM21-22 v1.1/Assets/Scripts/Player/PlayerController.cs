@@ -60,6 +60,7 @@ public class PlayerController : NetworkBehaviour
         handler.OnMove.AddListener(UpdatePlayerVisualsServerRpc);
         handler.OnJump.AddListener(PerformJumpServerRpc);
         handler.OnMoveFixedUpdate.AddListener(UpdatePlayerPositionServerRpc);
+        handler.OnDie.AddListener(UpdatePlayerDeadState);
 
         FlipSprite.OnValueChanged += OnFlipSpriteValueChanged;
         hitPoints.OnValueChanged += OnHitPointsValueChanged;
@@ -70,6 +71,7 @@ public class PlayerController : NetworkBehaviour
         handler.OnMove.RemoveListener(UpdatePlayerVisualsServerRpc);
         handler.OnJump.RemoveListener(PerformJumpServerRpc);
         handler.OnMoveFixedUpdate.RemoveListener(UpdatePlayerPositionServerRpc);
+        handler.OnDie.AddListener(UpdatePlayerDeadState);
 
         FlipSprite.OnValueChanged -= OnFlipSpriteValueChanged;
         hitPoints.OnValueChanged -= OnHitPointsValueChanged;
@@ -159,6 +161,18 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    void UpdatePlayerDeadState()
+    {
+        if(hitPoints.Value <= 0)
+        {
+            player.LiveState.Value = PlayerLiveState.Dead;
+            gameObject.SetActive(false);
+            //funcion de tiempo
+            //inicializar posiciond el jugador
+            player.LiveState.Value = PlayerLiveState.Alive;
+        }
+    }
+
     #endregion
 
     #endregion
@@ -185,12 +199,10 @@ public class PlayerController : NetworkBehaviour
     public void OnHitPointsValueChanged(int previous, int current)
     {
         hitPoints.Value = current;
-    }
-
-    [ClientRpc]
-    void UpdateUIClientRpc()
-    {
-        uiManager.UpdateLifeUI(hitPoints.Value);
+        if (IsLocalPlayer) //apaño para que cada vez que hay un cambio en la vida del jugador solo se modifique el Ui con el valor propio
+        {
+            uiManager.UpdateLifeUI(hitPoints.Value);
+        }
     }
 
     bool IsGrounded => collider.IsTouching(filter);

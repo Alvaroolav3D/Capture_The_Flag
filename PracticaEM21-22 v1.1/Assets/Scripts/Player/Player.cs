@@ -10,8 +10,8 @@ public class Player : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     public NetworkVariable<PlayerState> State;
+    public NetworkVariable<PlayerLiveState> LiveState;
     
-
     #endregion
 
     #region Unity Event Functions
@@ -22,6 +22,7 @@ public class Player : NetworkBehaviour
         NetworkManager.OnClientConnectedCallback += ConfigurePlayer;
 
         State = new NetworkVariable<PlayerState>();
+        LiveState = new NetworkVariable<PlayerLiveState>();
     }
 
     private void OnEnable()
@@ -31,12 +32,14 @@ public class Player : NetworkBehaviour
 
         // https://docs-multiplayer.unity3d.com/netcode/current/api/Unity.Netcode.NetworkVariable-1.OnValueChangedDelegate
         State.OnValueChanged += OnPlayerStateValueChanged;
+        LiveState.OnValueChanged += OnPlayerLiveStateValueChanged;
     }
 
     private void OnDisable()
     {
         // https://docs-multiplayer.unity3d.com/netcode/current/api/Unity.Netcode.NetworkVariable-1.OnValueChangedDelegate
         State.OnValueChanged -= OnPlayerStateValueChanged;
+        LiveState.OnValueChanged -= OnPlayerLiveStateValueChanged;
     }
 
     #endregion
@@ -100,6 +103,11 @@ public class Player : NetworkBehaviour
         State.Value = current;
     }
 
+    void OnPlayerLiveStateValueChanged(PlayerLiveState previous, PlayerLiveState current)
+    {
+        LiveState.Value = current;
+    }
+
     #endregion
 }
 
@@ -108,4 +116,10 @@ public enum PlayerState
     Grounded = 0,
     Jumping = 1,
     Hooked = 2
+}
+
+public enum PlayerLiveState
+{
+    Alive = 0,
+    Dead = 1
 }

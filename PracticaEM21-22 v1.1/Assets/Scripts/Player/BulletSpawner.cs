@@ -13,6 +13,9 @@ public class BulletSpawner : NetworkBehaviour
     {
         handler = GetComponent<InputHandler>();
         player = GetComponent<Player>();
+
+        //defino aqui el player porque dentro del server rpc solo se me inicializaria player en el servidor
+        bulletPrefab.GetComponent<Bullet>().player = player; 
     }
     private void OnEnable()
     {
@@ -31,7 +34,6 @@ public class BulletSpawner : NetworkBehaviour
         NetworkObject ballInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
 
         ballInstance.GetComponent<Bullet>().mouseposition = mousePos;
-        ballInstance.GetComponent<Bullet>().playerId = OwnerClientId;
 
         //spawneo la bala en los clientes
         ballInstance.SpawnWithOwnership(OwnerClientId);

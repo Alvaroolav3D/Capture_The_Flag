@@ -23,6 +23,7 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent<Vector2> OnHookRender;
     public UnityEvent OnJump;
     public UnityEvent<Vector2> OnFire;
+    public UnityEvent OnDie;
 
     //valor para la informacion del input cacheada para que cuando juegue con el jugador a eces necesitamos hacer actualizaciones en el update o en el fixedupdate
     Vector2 CachedMoveInput { get; set; } 
@@ -133,6 +134,11 @@ public class InputHandler : NetworkBehaviour
     void MousePosition(Vector2 input)
     {
         OnMousePosition?.Invoke(input);
+    }
+
+    void Die()
+    {
+        OnDie?.Invoke();
     }
 
     #endregion

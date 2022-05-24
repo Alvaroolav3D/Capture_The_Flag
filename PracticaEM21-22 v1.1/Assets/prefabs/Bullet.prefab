@@ -149,7 +149,7 @@ MonoBehaviour:
   bulletRenderer: {fileID: 2302730187240924172}
   bulletRigidbody: {fileID: 8976697049426894477}
   mouseposition: {x: 0, y: 0}
-  playerId: 0
+  player: {fileID: 0}
   speed: 10
   damage: 1
 --- !u!50 &8976697049426894477

@@ -9,7 +9,8 @@ public class Bullet : NetworkBehaviour
     [SerializeField] private Rigidbody2D bulletRigidbody;
 
     [HideInInspector] public Vector2 mouseposition;
-    [HideInInspector] public ulong playerId;
+
+    [HideInInspector] public Player player;
 
     public float speed;
     public int damage;
@@ -17,19 +18,11 @@ public class Bullet : NetworkBehaviour
 
     public void Start()
     {
-        var players = GameObject.FindGameObjectsWithTag("Player");
+        //el color es el mismo que el color del personaje. En caso de que este en algun equipo, la bala sera del color de ese equipo
+        bulletRenderer.color = player.GetComponent<SpriteRenderer>().color;
+        teamId = player.GetComponent<TeamPlayer>().teamId.Value;
 
-        foreach (GameObject p in players)
-        {
-            if (p.GetComponent<NetworkObject>().OwnerClientId == playerId)
-            {
-                //el color es el mismo que el color del personaje. En caso de que este en algun equipo, la bala sera del color de ese equipo
-                bulletRenderer.color = p.GetComponent<SpriteRenderer>().color;
-                teamId = p.GetComponent<TeamPlayer>().teamId.Value;
-
-                Physics2D.IgnoreCollision(p.GetComponent<CapsuleCollider2D>(), GetComponent<CircleCollider2D>());
-            }
-        }
+        Physics2D.IgnoreCollision(player.GetComponent<CapsuleCollider2D>(), GetComponent<CircleCollider2D>());
 
         var direction = (mouseposition - (Vector2)transform.position).normalized;
         bulletRigidbody.velocity = direction * speed;
@@ -48,7 +41,7 @@ public class Bullet : NetworkBehaviour
                 player.GetComponent<PlayerController>().OnHitPointsValueChanged(currentHitPoints, currentHitPoints - damage);
             }
         }
-            gameObject.GetComponent<NetworkObject>().Despawn();
+        gameObject.GetComponent<NetworkObject>().Despawn();
         }
     }
 }
