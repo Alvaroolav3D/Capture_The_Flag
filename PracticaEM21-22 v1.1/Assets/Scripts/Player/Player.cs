@@ -61,6 +61,7 @@ public class Player : NetworkBehaviour
     {
         //le doy un valor inicial al jugador de Grounded
         UpdatePlayerStateServerRpc(PlayerState.Grounded);
+        UpdatePlayerLiveStateServerRpc(PlayerLiveState.Alive);
     }
 
     void ConfigureCamera()
@@ -89,6 +90,11 @@ public class Player : NetworkBehaviour
     public void UpdatePlayerStateServerRpc(PlayerState state)
     {
         State.Value = state;
+    }
+    [ServerRpc]
+    public void UpdatePlayerLiveStateServerRpc(PlayerLiveState state)
+    {
+        LiveState.Value = state;
     }
 
     #endregion

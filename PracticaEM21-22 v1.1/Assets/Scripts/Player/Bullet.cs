@@ -30,7 +30,7 @@ public class Bullet : NetworkBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (IsServer)
+        if (IsServer) //lo hago en el servidor ya que una networkVariable no se puede modificar desde el cliente
         {
             if (collision.gameObject.CompareTag("Player"))
             {

@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     public UIManager uIManager;
 
     public int maxPlayers;
-    private bool gameReady = false;
     public List<Transform> spawnPoints;
 
     public float timer;

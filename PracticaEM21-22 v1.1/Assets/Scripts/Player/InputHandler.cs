@@ -70,6 +70,7 @@ public class InputHandler : NetworkBehaviour
         //solo se ejecuta este update en todo player
         if (IsLocalPlayer)
         {
+            Die();
             CachedMoveInput = _move.ReadValue<Vector2>();
             var mousePosition = _mousePosition.ReadValue<Vector2>();
 
@@ -88,6 +89,7 @@ public class InputHandler : NetworkBehaviour
             if (firePerformed) { Fire(screenPoint); }
 
             HookRender(CachedMoveInput);
+
         }
     }
 
@@ -116,6 +118,11 @@ public class InputHandler : NetworkBehaviour
         OnJump?.Invoke();
     }
 
+    void Die()
+    {
+        OnDie?.Invoke();
+    }
+
     void Hook(Vector2 input)
     {
         OnHook?.Invoke(input);
@@ -134,11 +141,6 @@ public class InputHandler : NetworkBehaviour
     void MousePosition(Vector2 input)
     {
         OnMousePosition?.Invoke(input);
-    }
-
-    void Die()
-    {
-        OnDie?.Invoke();
     }
 
     #endregion

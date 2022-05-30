@@ -16,6 +16,7 @@ public class PlayerController : NetworkBehaviour
     readonly float jumpHeight = 6.5f;
     readonly float gravity = 1.5f;
     readonly int maxJumps = 2;
+    readonly int maxHitPoints = 6;
 
     LayerMask _layer;
     int _jumpsLeft; //numero de saltos restantes
@@ -29,6 +30,7 @@ public class PlayerController : NetworkBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
     UIManager uiManager;
+    GameManager gameManager;
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     NetworkVariable<bool> FlipSprite; //determina a que direccion mira el jugador
@@ -52,6 +54,7 @@ public class PlayerController : NetworkBehaviour
         hitPoints = new NetworkVariable<int>();
 
         uiManager = GameObject.Find("UIManager").GetComponent<UIManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     private void OnEnable()
@@ -59,8 +62,8 @@ public class PlayerController : NetworkBehaviour
         //nos suscribimos a los metodos
         handler.OnMove.AddListener(UpdatePlayerVisualsServerRpc);
         handler.OnJump.AddListener(PerformJumpServerRpc);
+        handler.OnDie.AddListener(UpdateDeadStateServerRpc);
         handler.OnMoveFixedUpdate.AddListener(UpdatePlayerPositionServerRpc);
-        handler.OnDie.AddListener(UpdatePlayerDeadState);
 
         FlipSprite.OnValueChanged += OnFlipSpriteValueChanged;
         hitPoints.OnValueChanged += OnHitPointsValueChanged;
@@ -70,8 +73,8 @@ public class PlayerController : NetworkBehaviour
     {
         handler.OnMove.RemoveListener(UpdatePlayerVisualsServerRpc);
         handler.OnJump.RemoveListener(PerformJumpServerRpc);
+        handler.OnDie.RemoveListener(UpdateDeadStateServerRpc);
         handler.OnMoveFixedUpdate.RemoveListener(UpdatePlayerPositionServerRpc);
-        handler.OnDie.AddListener(UpdatePlayerDeadState);
 
         FlipSprite.OnValueChanged -= OnFlipSpriteValueChanged;
         hitPoints.OnValueChanged -= OnHitPointsValueChanged;
@@ -93,8 +96,23 @@ public class PlayerController : NetworkBehaviour
         filter.useNormalAngle = true;
         filter.layerMask = _layer; //el contact filter solo se va a aplicar a la capa layer que en este caso es obstacles
 
-        hitPoints.Value = 6;
+        //establezco la vida inicial
+        hitPoints.Value = maxHitPoints;
         uiManager.UpdateLifeUI(hitPoints.Value);
+    }
+
+    private void Update()
+    {
+        if (player.LiveState.Value == PlayerLiveState.Dead)
+        {
+            spriteRenderer.enabled = false;
+            handler.enabled = false; //evito que el personaje pueda moverse quitandole el inputHandler
+        }
+        else
+        {
+            spriteRenderer.enabled = true;
+            handler.enabled = true; //evito que el personaje pueda moverse quitandole el inputHandler
+        }
     }
 
     #endregion
@@ -129,7 +147,7 @@ public class PlayerController : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/advanced-topics/message-system/serverrpc
     [ServerRpc]
-    void PerformJumpServerRpc() //arreglar a veces salta 3 veces porque considera en teoria que ya esta grounded
+    void PerformJumpServerRpc()
     {
         if (player.State.Value == PlayerState.Grounded)
         {
@@ -161,16 +179,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    void UpdatePlayerDeadState()
+    [ServerRpc]
+    void UpdateDeadStateServerRpc()
     {
-        if(hitPoints.Value <= 0)
-        {
-            player.LiveState.Value = PlayerLiveState.Dead;
-            gameObject.SetActive(false);
-            //funcion de tiempo
-            //inicializar posiciond el jugador
-            player.LiveState.Value = PlayerLiveState.Alive;
-        }
+        UpdatePlayerDeadState();
     }
 
     #endregion
@@ -178,6 +190,31 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Methods
+
+    void UpdatePlayerDeadState()
+    {
+        if (hitPoints.Value <= 0 && player.LiveState.Value == PlayerLiveState.Alive)
+        {
+            //inicio cuenta atras de corutina
+            StartCoroutine(TimeDeath());
+        }
+    }
+
+    IEnumerator TimeDeath()
+    {
+        spriteRenderer.enabled = false;
+        player.LiveState.Value = PlayerLiveState.Dead;
+        print("muerto");
+
+        yield return new WaitForSeconds(3);
+
+        print("vivo");
+        //inicializar posicion aleatoria. Gracias al networkTransform en cleinte y servidor se colocara en el mismo lugar
+        gameObject.transform.position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position;
+        player.LiveState.Value = PlayerLiveState.Alive;
+        hitPoints.Value = maxHitPoints;
+        spriteRenderer.enabled = true;
+    }
 
     void UpdateSpriteOrientation(Vector2 input)
     {
@@ -199,13 +236,13 @@ public class PlayerController : NetworkBehaviour
     public void OnHitPointsValueChanged(int previous, int current)
     {
         hitPoints.Value = current;
-        if (IsLocalPlayer) //apaño para que cada vez que hay un cambio en la vida del jugador solo se modifique el Ui con el valor propio
+        if (IsLocalPlayer) //cada vez que hay un cambio en la vida del jugador solo se modifique el Ui con el valor propio
         {
             uiManager.UpdateLifeUI(hitPoints.Value);
         }
     }
 
-    bool IsGrounded => collider.IsTouching(filter);
+    bool IsGrounded => collider.IsTouching(filter) && rb.velocity.y == 0;
 
     #endregion
 
