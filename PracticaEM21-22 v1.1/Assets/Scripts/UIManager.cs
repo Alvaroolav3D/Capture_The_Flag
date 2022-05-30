@@ -19,7 +19,6 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Sprite[] hearts = new Sprite[3];
 
-
     [Header("Main Menu")]
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private Button goHostMenu;
@@ -45,9 +44,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InputField clientPasswordInputField;
     [SerializeField] private Button buttonClient;
 
+    [Header("Ready Menu")]
+    [SerializeField] private GameObject readyMenu;
+    [SerializeField] private InputField inputFieldPlayerName;
+    [SerializeField] private Button buttonReady;
+
     [Header("In-Game HUD")]
     [SerializeField] private GameObject inGameHUD;
     [SerializeField] RawImage[] heartsUI = new RawImage[3];
+
+    [Header("Timer")]
+    [SerializeField] TextMeshProUGUI timerText;
 
     #endregion
 
@@ -69,6 +76,7 @@ public class UIManager : MonoBehaviour
         buttonHost.onClick.AddListener(() => StartHost());
         buttonClient.onClick.AddListener(() => StartClient());
         buttonServer.onClick.AddListener(() => StartServer());
+        buttonReady.onClick.AddListener(() => ActivateInGameHUD());
 
         ActivateMainMenu();
     }
@@ -85,6 +93,7 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
+        readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
     }
     private void ActivateHostMenu()
@@ -95,6 +104,7 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(true);
 
+        readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
     }
     private void ActivateServerMenu()
@@ -105,6 +115,7 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(true);
 
+        readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
     }
     private void ActivateClientMenu()
@@ -115,9 +126,20 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(true);
         backMenu.SetActive(true);
 
+        readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
     }
+    private void ActivateReadyMenu()
+    {
+        mainMenu.SetActive(false);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(false);
 
+        readyMenu.SetActive(true);
+        inGameHUD.SetActive(false);
+    }
     private void ActivateInGameHUD()
     {
         mainMenu.SetActive(false);
@@ -126,7 +148,15 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
+        SetPlayerName();
+
+        readyMenu.SetActive(false);
         inGameHUD.SetActive(true);
+    }
+
+    public void SetPlayerName()
+    {
+        var playerName = inputFieldPlayerName.text;
     }
 
     public void UpdateLifeUI(int hitpoints)
@@ -171,6 +201,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public float UpdateTimeCounter(float timer)
+    {
+        timer -= Time.deltaTime;
+        timerText.text = "" + timer.ToString("f0");
+        return timer;
+    }
     #endregion
 
     #region Netcode Related Methods
@@ -179,7 +215,7 @@ public class UIManager : MonoBehaviour
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartHost();
-        ActivateInGameHUD();
+        ActivateReadyMenu();
     }
 
     private void StartClient()
@@ -191,14 +227,14 @@ public class UIManager : MonoBehaviour
             transport.SetConnectionData(ip, port);
         }
         NetworkManager.Singleton.StartClient();
-        ActivateInGameHUD();
+        ActivateReadyMenu();
     }
 
     private void StartServer()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         NetworkManager.Singleton.StartServer();
-        ActivateInGameHUD();
+        ActivateReadyMenu();
     }
 
     private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback) //aprovalcheck de MLAPI
@@ -211,7 +247,5 @@ public class UIManager : MonoBehaviour
 
         callback(emptyPlaceInGame, null, approveConnection, position, null); //callback del delegado ConnectionApprovedDelegate
     }
-
     #endregion
-
 }

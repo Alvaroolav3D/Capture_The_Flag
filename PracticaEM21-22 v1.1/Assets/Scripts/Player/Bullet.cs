@@ -32,15 +32,15 @@ public class Bullet : NetworkBehaviour
     {
         if (IsServer)
         {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            var player = collision.gameObject;
-            if (player.GetComponent<TeamPlayer>().teamId.Value != teamId || player.GetComponent<TeamPlayer>().teamId.Value == 0)
+            if (collision.gameObject.CompareTag("Player"))
             {
-                var currentHitPoints = player.GetComponent<PlayerController>().hitPoints.Value;
-                player.GetComponent<PlayerController>().OnHitPointsValueChanged(currentHitPoints, currentHitPoints - damage);
+                var player = collision.gameObject;
+                if (player.GetComponent<TeamPlayer>().teamId.Value != teamId || player.GetComponent<TeamPlayer>().teamId.Value == 0)
+                {
+                    var currentHitPoints = player.GetComponent<PlayerController>().hitPoints.Value;
+                    player.GetComponent<PlayerController>().OnHitPointsValueChanged(currentHitPoints, currentHitPoints - damage);
+                }
             }
-        }
         gameObject.GetComponent<NetworkObject>().Despawn();
         }
     }
