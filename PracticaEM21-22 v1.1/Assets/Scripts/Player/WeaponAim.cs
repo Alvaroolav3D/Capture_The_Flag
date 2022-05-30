@@ -8,7 +8,7 @@ public class WeaponAim : NetworkBehaviour
 
     [SerializeField] public Transform crossHair;
     [SerializeField] Transform weapon;
-    SpriteRenderer weaponRenderer;
+    public SpriteRenderer weaponRenderer;
     InputHandler handler;
 
     #endregion

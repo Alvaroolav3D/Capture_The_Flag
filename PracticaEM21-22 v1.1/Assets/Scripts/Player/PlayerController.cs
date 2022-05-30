@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CapsuleCollider2D))]
@@ -35,6 +36,8 @@ public class PlayerController : NetworkBehaviour
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     NetworkVariable<bool> FlipSprite; //determina a que direccion mira el jugador
     public NetworkVariable<int> hitPoints; //determina a que direccion mira el jugador
+    public SpriteRenderer weaponSpriteRenderer;
+    public TextMeshPro nameRenderer;
 
     #endregion
 
@@ -99,6 +102,9 @@ public class PlayerController : NetworkBehaviour
         //establezco la vida inicial
         hitPoints.Value = maxHitPoints;
         uiManager.UpdateLifeUI(hitPoints.Value);
+
+        //referencia al spriterenderer del arma
+        weaponSpriteRenderer = GetComponent<WeaponAim>().weaponRenderer;
     }
 
     private void Update()
@@ -106,12 +112,16 @@ public class PlayerController : NetworkBehaviour
         if (player.LiveState.Value == PlayerLiveState.Dead)
         {
             spriteRenderer.enabled = false;
-            handler.enabled = false; //evito que el personaje pueda moverse quitandole el inputHandler
+            weaponSpriteRenderer.enabled = false;
+            nameRenderer.enabled = false;
+            if(IsLocalPlayer) handler.enabled = false; //evito que el personaje pueda moverse quitandole el inputHandler
         }
         else
         {
             spriteRenderer.enabled = true;
-            handler.enabled = true; //evito que el personaje pueda moverse quitandole el inputHandler
+            weaponSpriteRenderer.enabled = true;
+            nameRenderer.enabled = true;
+            if (IsLocalPlayer) handler.enabled = true; //evito que el personaje pueda moverse quitandole el inputHandler
         }
     }
 

@@ -492,6 +492,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitPoints:
     m_InternalValue: 0
+  weaponSpriteRenderer: {fileID: 2125255221}
+  nameRenderer: {fileID: 9044444877311554213}
 --- !u!114 &8835148374866897493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,6 +521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crossHair: {fileID: 693612501}
   weapon: {fileID: 2125255220}
+  weaponRenderer: {fileID: 0}
 --- !u!212 &5644749167613886766
 SpriteRenderer:
   m_ObjectHideFlags: 0
