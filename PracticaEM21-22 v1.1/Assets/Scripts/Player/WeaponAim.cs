@@ -3,7 +3,6 @@ using Unity.Netcode;
 
 public class WeaponAim : NetworkBehaviour
 {
-
     #region Variables
 
     [SerializeField] public Transform crossHair;

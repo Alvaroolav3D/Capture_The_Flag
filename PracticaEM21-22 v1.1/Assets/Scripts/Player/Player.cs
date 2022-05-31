@@ -15,6 +15,8 @@ public class Player : NetworkBehaviour
     public NetworkVariable<FixedString64Bytes> playerName;
     public NetworkVariable<bool> isReady;
     public NetworkVariable<bool> gameReady;
+
+    //corregir en un futuro para que todas las variables correspondientes a los atributos del jugador esten aqui
     
     #endregion
 

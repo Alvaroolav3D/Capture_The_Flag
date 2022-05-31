@@ -32,6 +32,7 @@ public class GameManager : NetworkBehaviour
     }
     private void UpdateAllPlayersName()
     {
+        //funcion encargada de actualizar el TMPro de los player para que tengan el mismo valor que el nombre del jugador
         if (startTimer == false)
         {
             var players = GameObject.FindGameObjectsWithTag("Player");
@@ -45,7 +46,10 @@ public class GameManager : NetworkBehaviour
 
     private void StartTheGame()
     {
-        if (IsOwnedByServer) //cambiar en un futuro
+        //cambiar en un futuro
+        //si la partida no ha empezado comprueba cuantos jugadores estan preparados,
+        //en caso de que todos esten listos la partida comenzara asi como el timer
+        if (IsOwnedByServer) 
         {
             if (startTimer == false)
             {

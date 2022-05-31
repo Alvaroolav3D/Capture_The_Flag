@@ -21,9 +21,9 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent<Vector2> OnMousePosition;
     public UnityEvent<Vector2> OnHook;
     public UnityEvent<Vector2> OnHookRender;
-    public UnityEvent<Vector2> OnFire;
+    public UnityEvent<Vector2> OnFire; //delegado que recibe su funcion en bulletSpawner.cs
     public UnityEvent OnJump;
-    public UnityEvent OnDie;
+    public UnityEvent OnDie; //delegado que se activa las funciones correspondientes a la muerte del personaje
 
     Player player;
 
@@ -71,7 +71,7 @@ public class InputHandler : NetworkBehaviour
 
     private void Update()
     {
-        //si la partida no esta lista el jugador no se podra mover
+        //si la partida no esta activa el jugador no se podra mover
         if (!player.gameReady.Value) return;
         if (IsLocalPlayer)
         {

@@ -7,7 +7,7 @@ public class BulletSpawner : NetworkBehaviour
 {
     [SerializeField] public NetworkObject bulletPrefab;
     InputHandler handler;
-    Player player;
+    Player player; //referencia al player que corresponde
 
     private void Awake()
     {
@@ -28,6 +28,7 @@ public class BulletSpawner : NetworkBehaviour
     void SpawnBulletServerRpc(Vector2 mousePos)
     {
         //en este punto solo el servidor seria consciente de que se ha spawneado una bala en spawnPos, no los clientes
+        //opr tanto tengo que generar la bala en los clientes
         NetworkObject bulletInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
 
         bulletInstance.GetComponent<Bullet>().mouseposition = mousePos;

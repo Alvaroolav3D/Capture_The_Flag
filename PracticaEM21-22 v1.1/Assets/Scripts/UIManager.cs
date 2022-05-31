@@ -179,6 +179,8 @@ public class UIManager : NetworkBehaviour
     }
     public void TryGameStart()
     {
+        //cuando el jugador le da al boton de ready pone el estado de su personaje en ready para todos los clientes
+        //y el nombre que estuviese en el inputfield
         var players = GameObject.FindGameObjectsWithTag("Player");
         GameObject client;
 
@@ -191,12 +193,15 @@ public class UIManager : NetworkBehaviour
                 client.GetComponent<Player>().UpdatePlayerNameServerRpc(inputFieldPlayerName.text);
             }
         }
+        //GameIsReadyServerRpc();
     }
 
+    //esta funcion ServerRpc y ClientRpc tiene la intencion de sustituir al las funciones del gamemanager que se encargan de ello
+    //pero por un motivo que aun desconozco la funcion de GameIsServerRpc no se ejecuta en el servidor
     [ServerRpc]
     public void GameIsReadyServerRpc()
     {
-        print("yo men");
+        //cuando el jugador le da a ready le envia al servidor a ejecutar esta funcion
         if (gameManager.startTimer == false)
         {
             gameManager.playersReady = 0;
@@ -219,7 +224,7 @@ public class UIManager : NetworkBehaviour
     [ClientRpc]
     public void GameStartClientRpc()
     {
-        print("ssss");
+        //el servidor le dice a los clientes que actualicen el estado de la partida gameReady a true y que empiece el timer
         var players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
@@ -306,15 +311,21 @@ public class UIManager : NetworkBehaviour
         ActivateReadyMenu();
     }
 
-    private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback) //aprovalcheck de MLAPI
+    private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
     {
         string password = Encoding.ASCII.GetString(connectionData);
-        bool approveConnection = (password == hostPasswordInputField.text) || (password == serverPasswordInputField.text); //determino si la contraseña introducida es la misma que la del servidor
-        bool emptyPlaceInGame = NetworkManager.Singleton.ConnectedClients.Count < gameManager.maxPlayers; //determino si el numero de jugadores es menor que el maximo permitido
 
-        Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; //posicion aleatoria del array de spawnpoints del game manager
+        //determino si la contraseña introducida es la misma que la del servidor
+        bool approveConnection = (password == hostPasswordInputField.text) || (password == serverPasswordInputField.text); 
 
-        callback(emptyPlaceInGame, null, approveConnection, position, null); //callback del delegado ConnectionApprovedDelegate
+        //determino si el numero de jugadores es menor que el maximo permitido
+        bool emptyPlaceInGame = NetworkManager.Singleton.ConnectedClients.Count < gameManager.maxPlayers; 
+
+        //posicion aleatoria del array de spawnpoints del game manager
+        Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; 
+
+        //callback del delegado ConnectionApprovedDelegate que instancia al jugador si los requisitos se cumplen
+        callback(emptyPlaceInGame, null, approveConnection, position, null); 
     }
     #endregion
 }

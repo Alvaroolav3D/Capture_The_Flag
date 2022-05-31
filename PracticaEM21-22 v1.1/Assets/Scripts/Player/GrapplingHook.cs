@@ -117,7 +117,7 @@ public class GrapplingHook : NetworkBehaviour
 
         if (hit.collider)
         {
-            rope.enabled = true;
+            rope.enabled = true; //dado que rope no estaba activado en el servidor, no se calculan bien las fisicas y los clientes no se enganchan
             var anchor = hit.centroid;
             rope.connectedAnchor = anchor;
             ropeRenderer.SetPosition(1, anchor);

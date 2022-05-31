@@ -35,7 +35,7 @@ public class PlayerController : NetworkBehaviour
 
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     NetworkVariable<bool> FlipSprite; //determina a que direccion mira el jugador
-    public NetworkVariable<int> hitPoints; //determina a que direccion mira el jugador
+    public NetworkVariable<int> hitPoints; //determina la vida del jugador.
     public SpriteRenderer weaponSpriteRenderer;
     public TextMeshPro nameRenderer;
 
@@ -109,6 +109,9 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
+        //en este update compruebo si el jugador esta muerto
+        //dependiendo de su estado se visualizaran unas cosas u otras
+        //podria hacer que se visualizase el menu de stats al morir: uiManager.ActivateStatsMenu();
         if (player.LiveState.Value == PlayerLiveState.Dead)
         {
             spriteRenderer.enabled = false;
@@ -203,6 +206,7 @@ public class PlayerController : NetworkBehaviour
 
     void UpdatePlayerDeadState()
     {
+        //funcion que ejecuta una coroutina cuando el personaje muere
         if (hitPoints.Value <= 0 && player.LiveState.Value == PlayerLiveState.Alive)
         {
             //inicio cuenta atras de corutina
@@ -252,7 +256,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    bool IsGrounded => collider.IsTouching(filter) && rb.velocity.y == 0;
+    bool IsGrounded => collider.IsTouching(filter) && rb.velocity.y == 0; //arreglo del salto cuando la velocidad en el eje y es 0
 
     #endregion
 

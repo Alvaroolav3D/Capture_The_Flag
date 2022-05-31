@@ -10,6 +10,7 @@ public class TeamPicker : MonoBehaviour
         //variable utilizada para selecciona al cliente con esta id
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
 
+        //array que almacena todos los jugadores con el objetivo que encontrar el jugador local
         var players = GameObject.FindGameObjectsWithTag("Player"); //utilizo esto debido a que lo comentado abajo no funciona por ser cliente :(
 
         GameObject client;
@@ -18,8 +19,9 @@ public class TeamPicker : MonoBehaviour
         {
             if (p.GetComponent<NetworkObject>().OwnerClientId == localClientId)
             {
+                //envio un mensaje al servidor con el equipo del jugador con esta id
                 client = p;
-                client.GetComponent<TeamPlayer>().SetTeamServerRpc((byte)teamId); //envio un mensaje al servidor con el equipo del jugador con esta id
+                client.GetComponent<TeamPlayer>().SetTeamServerRpc((byte)teamId); 
             }
         }
 
