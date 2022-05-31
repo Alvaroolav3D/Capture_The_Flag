@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Unity.Netcode;
+using Unity.Collections;
 
 public class Player : NetworkBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : NetworkBehaviour
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     public NetworkVariable<PlayerState> State;
     public NetworkVariable<PlayerLiveState> LiveState;
+    public NetworkVariable<FixedString64Bytes> playerName;
     public NetworkVariable<bool> isReady;
     public NetworkVariable<bool> gameReady;
     
@@ -25,6 +27,7 @@ public class Player : NetworkBehaviour
 
         State = new NetworkVariable<PlayerState>();
         LiveState = new NetworkVariable<PlayerLiveState>();
+        playerName = new NetworkVariable<FixedString64Bytes>();
         isReady = new NetworkVariable<bool>();
         gameReady = new NetworkVariable<bool>();
     }
@@ -39,6 +42,7 @@ public class Player : NetworkBehaviour
         LiveState.OnValueChanged += OnPlayerLiveStateValueChanged;
         isReady.OnValueChanged += OnPlayerIsReadyValueChanged;
         gameReady.OnValueChanged += OnGameReadyValueChanged;
+        playerName.OnValueChanged += OnPlayerNameValueChanged;
     }
 
     private void OnDisable()
@@ -48,6 +52,7 @@ public class Player : NetworkBehaviour
         LiveState.OnValueChanged -= OnPlayerLiveStateValueChanged;
         isReady.OnValueChanged -= OnPlayerIsReadyValueChanged;
         gameReady.OnValueChanged -= OnGameReadyValueChanged;
+        playerName.OnValueChanged -= OnPlayerNameValueChanged;
     }
 
     #endregion
@@ -116,6 +121,11 @@ public class Player : NetworkBehaviour
     {
         gameReady.Value = ready;
     }
+    [ServerRpc]
+    public void UpdatePlayerNameServerRpc(FixedString64Bytes name)
+    {
+        playerName.Value = name;
+    }
 
     #endregion
 
@@ -141,6 +151,10 @@ public class Player : NetworkBehaviour
     void OnGameReadyValueChanged(bool previous, bool current)
     {
         gameReady.Value = current;
+    }
+    void OnPlayerNameValueChanged(FixedString64Bytes previous, FixedString64Bytes current)
+    {
+        playerName.Value = current;
     }
 
     #endregion

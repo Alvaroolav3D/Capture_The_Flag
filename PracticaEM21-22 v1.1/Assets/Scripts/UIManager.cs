@@ -7,6 +7,7 @@ using Unity.Netcode.Transports.UTP;
 using System.Text;
 using TMPro;
 using Unity.Netcode;
+using Unity.Collections;
 
 public class UIManager : NetworkBehaviour
 {
@@ -49,7 +50,6 @@ public class UIManager : NetworkBehaviour
     [SerializeField] private GameObject readyMenu;
     [SerializeField] private InputField inputFieldPlayerName;
     [SerializeField] private Button buttonReady;
-    string playerName;
 
     [Header("In-Game HUD")]
     [SerializeField] private GameObject inGameHUD;
@@ -139,7 +139,7 @@ public class UIManager : NetworkBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
-        readyMenu.SetActive(true);
+        if(!IsServer) readyMenu.SetActive(true);
         inGameHUD.SetActive(false);
     }
     private void ActivateInGameHUD()
@@ -166,6 +166,11 @@ public class UIManager : NetworkBehaviour
             {
                 client = p;
                 client.GetComponent<Player>().UpdatePlayerIsReadyServerRpc(true);
+                client.GetComponent<Player>().UpdatePlayerNameServerRpc(inputFieldPlayerName.text);
+
+                //string name = client.GetComponent<Player>().playerName.Value.ToString();
+                //client.GetComponent<PlayerController>().nameRenderer.text = name;
+                //print(name);
             }
         }
     }
@@ -181,11 +186,6 @@ public class UIManager : NetworkBehaviour
     //    }
     //    gameManager.startTimer = true;
     //}
-
-    public void SetPlayerName()
-    {
-        playerName = inputFieldPlayerName.text;
-    }
 
     public void UpdateLifeUI(int hitpoints)
     {

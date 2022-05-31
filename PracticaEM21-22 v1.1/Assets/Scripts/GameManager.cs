@@ -18,11 +18,20 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
+        if (startTimer == false)
+        {
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject player in players)
+            {
+                string name = player.GetComponent<Player>().playerName.Value.ToString();
+                player.GetComponent<PlayerController>().nameRenderer.text = name;
+            }
+        }
+
         if (IsOwnedByServer) //cambiar en un futuro
         {
             if (startTimer == false)
             {
-                print(playersReady);
                 playersReady = 0;
                 var players = GameObject.FindGameObjectsWithTag("Player");
                 foreach (GameObject p in players)
