@@ -21,8 +21,8 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent<Vector2> OnMousePosition;
     public UnityEvent<Vector2> OnHook;
     public UnityEvent<Vector2> OnHookRender;
-    public UnityEvent OnJump;
     public UnityEvent<Vector2> OnFire;
+    public UnityEvent OnJump;
     public UnityEvent OnDie;
 
     Player player;
@@ -71,8 +71,8 @@ public class InputHandler : NetworkBehaviour
 
     private void Update()
     {
+        //si la partida no esta lista el jugador no se podra mover
         if (!player.gameReady.Value) return;
-        //solo se ejecuta este update en todo player
         if (IsLocalPlayer)
         {
             Die();

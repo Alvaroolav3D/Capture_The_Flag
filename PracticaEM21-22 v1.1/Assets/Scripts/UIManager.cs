@@ -139,7 +139,7 @@ public class UIManager : NetworkBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
-        if(!IsServer) readyMenu.SetActive(true);
+        if(!IsServer || IsHost) readyMenu.SetActive(true);
         inGameHUD.SetActive(false);
     }
     private void ActivateInGameHUD()

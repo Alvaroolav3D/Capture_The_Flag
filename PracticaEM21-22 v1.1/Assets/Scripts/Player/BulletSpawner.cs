@@ -13,9 +13,6 @@ public class BulletSpawner : NetworkBehaviour
     {
         handler = GetComponent<InputHandler>();
         player = GetComponent<Player>();
-
-        //defino aqui el player porque dentro del server rpc solo se me inicializaria player en el servidor
-        bulletPrefab.GetComponent<Bullet>().player = player; 
     }
     private void OnEnable()
     {
@@ -31,11 +28,12 @@ public class BulletSpawner : NetworkBehaviour
     void SpawnBulletServerRpc(Vector2 mousePos)
     {
         //en este punto solo el servidor seria consciente de que se ha spawneado una bala en spawnPos, no los clientes
-        NetworkObject ballInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
+        NetworkObject bulletInstance = Instantiate(bulletPrefab, player.transform.position, Quaternion.identity);
 
-        ballInstance.GetComponent<Bullet>().mouseposition = mousePos;
+        bulletInstance.GetComponent<Bullet>().mouseposition = mousePos;
+        bulletInstance.GetComponent<Bullet>().player = player;
 
-        //spawneo la bala en los clientes
-        ballInstance.SpawnWithOwnership(OwnerClientId);
+        //genero la bala en los clientes
+        bulletInstance.SpawnWithOwnership(OwnerClientId);
     }
 }
