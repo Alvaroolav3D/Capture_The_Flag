@@ -21,6 +21,7 @@ public class Bullet : NetworkBehaviour
     {
         //el color es el mismo que el color del personaje. En caso de que el jugador pertenezca a un equipo
         //en algun equipo, la bala sera del color de ese equipo
+
         bulletRenderer.color = player.GetComponent<SpriteRenderer>().color;
         teamId = player.GetComponent<TeamPlayer>().teamId.Value;
 

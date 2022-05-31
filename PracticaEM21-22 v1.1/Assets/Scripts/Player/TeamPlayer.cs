@@ -6,7 +6,7 @@ using Unity.Netcode;
 public class TeamPlayer : NetworkBehaviour
 {
     [SerializeField] private SpriteRenderer teamColourRenderer;
-    [SerializeField] private Color[] teamColours;
+    [SerializeField] public Color[] teamColours;
     //el teamColours[0] queda reservado para un jugador sin equipo
     //los 4 indices siguientes son los equipos y el jugador cambiara de color
 

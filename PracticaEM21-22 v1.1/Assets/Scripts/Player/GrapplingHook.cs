@@ -117,6 +117,7 @@ public class GrapplingHook : NetworkBehaviour
 
         if (hit.collider)
         {
+            rope.enabled = true;
             var anchor = hit.centroid;
             rope.connectedAnchor = anchor;
             ropeRenderer.SetPosition(1, anchor);

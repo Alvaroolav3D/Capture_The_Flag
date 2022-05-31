@@ -18,6 +18,20 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
+        UpdateAllPlayersName();
+        StartTheGame();
+
+        if (startTimer == true && timer > 0)
+        {
+            timer = uIManager.UpdateTimeCounter(timer);
+        }
+        else
+        {
+            GameEnds();
+        }
+    }
+    private void UpdateAllPlayersName()
+    {
         if (startTimer == false)
         {
             var players = GameObject.FindGameObjectsWithTag("Player");
@@ -27,7 +41,10 @@ public class GameManager : NetworkBehaviour
                 player.GetComponent<PlayerController>().nameRenderer.text = name;
             }
         }
+    }
 
+    private void StartTheGame()
+    {
         if (IsOwnedByServer) //cambiar en un futuro
         {
             if (startTimer == false)
@@ -41,7 +58,7 @@ public class GameManager : NetworkBehaviour
                         playersReady += 1;
                     }
                 }
-                if(playersReady == maxPlayers)
+                if (playersReady == maxPlayers)
                 {
                     foreach (GameObject player in players)
                     {
@@ -51,14 +68,25 @@ public class GameManager : NetworkBehaviour
                 }
             }
         }
+    }
 
-        if (startTimer == true && timer > 0)
+    private void GameEnds()
+    {
+        if (startTimer == true)
         {
-            timer = uIManager.UpdateTimeCounter(timer);
-        }
-        else
-        {
+            //actualizo a cada jugador que la partida ya no esta ready
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject player in players)
+            {
+                player.GetComponent<Player>().UpdateGameReadyServerRpc(false);
+            }
+            uIManager.ActivateStatsMenu();
 
+            //desconecto al cliente del servidor
+            if (IsOwner)
+            {
+                NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+            }
         }
     }
 }

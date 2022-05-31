@@ -58,6 +58,9 @@ public class UIManager : NetworkBehaviour
     [Header("Timer")]
     [SerializeField] TextMeshProUGUI timerText;
 
+    [Header("Stats Menu")]
+    [SerializeField] private GameObject statsMenu;
+
     #endregion
 
     #region Unity Event Functions
@@ -97,6 +100,7 @@ public class UIManager : NetworkBehaviour
 
         readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
+        statsMenu.SetActive(false);
     }
     private void ActivateHostMenu()
     {
@@ -108,6 +112,7 @@ public class UIManager : NetworkBehaviour
 
         readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
+        statsMenu.SetActive(false);
     }
     private void ActivateServerMenu()
     {
@@ -119,6 +124,7 @@ public class UIManager : NetworkBehaviour
 
         readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
+        statsMenu.SetActive(false);
     }
     private void ActivateClientMenu()
     {
@@ -130,6 +136,7 @@ public class UIManager : NetworkBehaviour
 
         readyMenu.SetActive(false);
         inGameHUD.SetActive(false);
+        statsMenu.SetActive(false);
     }
     private void ActivateReadyMenu()
     {
@@ -139,8 +146,9 @@ public class UIManager : NetworkBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
-        if(!IsServer || IsHost) readyMenu.SetActive(true);
+        if(!IsServer || IsHost) readyMenu.SetActive(true); //para que en el servidor no se vea la pantalla de ready
         inGameHUD.SetActive(false);
+        statsMenu.SetActive(false);
     }
     private void ActivateInGameHUD()
     {
@@ -154,6 +162,20 @@ public class UIManager : NetworkBehaviour
         
         readyMenu.SetActive(false);
         inGameHUD.SetActive(true);
+        statsMenu.SetActive(false);
+    }
+
+    public void ActivateStatsMenu()
+    {
+        mainMenu.SetActive(false);
+        hostMenu.SetActive(false);
+        serverMenu.SetActive(false);
+        clientMenu.SetActive(false);
+        backMenu.SetActive(false);
+
+        readyMenu.SetActive(false);
+        inGameHUD.SetActive(false);
+        statsMenu.SetActive(true);
     }
     public void TryGameStart()
     {
@@ -167,25 +189,44 @@ public class UIManager : NetworkBehaviour
                 client = p;
                 client.GetComponent<Player>().UpdatePlayerIsReadyServerRpc(true);
                 client.GetComponent<Player>().UpdatePlayerNameServerRpc(inputFieldPlayerName.text);
-
-                //string name = client.GetComponent<Player>().playerName.Value.ToString();
-                //client.GetComponent<PlayerController>().nameRenderer.text = name;
-                //print(name);
             }
         }
     }
 
-    //[ServerRpc]
-    //public void GameIsReadyServerRpc()
-    //{
-    //    var players = GameObject.FindGameObjectsWithTag("Player");
-    //    foreach (GameObject player in players)
-    //    {
-    //        print("hey");
-    //        player.GetComponent<Player>().UpdateGameReadyServerRpc(true);
-    //    }
-    //    gameManager.startTimer = true;
-    //}
+    [ServerRpc]
+    public void GameIsReadyServerRpc()
+    {
+        print("yo men");
+        if (gameManager.startTimer == false)
+        {
+            gameManager.playersReady = 0;
+            var players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject p in players)
+            {
+                if (p.GetComponent<Player>().isReady.Value == true)
+                {
+                    gameManager.playersReady += 1;
+                }
+            }
+            print(gameManager.playersReady);
+            if (gameManager.playersReady == gameManager.maxPlayers)
+            {
+                //el servidor le dice a los clientes que actualizan el etstado de la partida a listo
+                GameStartClientRpc();
+            }
+        }
+    }
+    [ClientRpc]
+    public void GameStartClientRpc()
+    {
+        print("ssss");
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<Player>().UpdateGameReadyServerRpc(true);
+        }
+        gameManager.startTimer = true;
+    }
 
     public void UpdateLifeUI(int hitpoints)
     {
