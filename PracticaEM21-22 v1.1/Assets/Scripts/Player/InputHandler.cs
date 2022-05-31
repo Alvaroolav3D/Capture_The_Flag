@@ -25,6 +25,8 @@ public class InputHandler : NetworkBehaviour
     public UnityEvent<Vector2> OnFire;
     public UnityEvent OnDie;
 
+    Player player;
+
     //valor para la informacion del input cacheada para que cuando juegue con el jugador a eces necesitamos hacer actualizaciones en el update o en el fixedupdate
     Vector2 CachedMoveInput { get; set; } 
 
@@ -45,6 +47,8 @@ public class InputHandler : NetworkBehaviour
         _hook.AddBinding("<Mouse>/middleButton");
         _fire.AddBinding("<Mouse>/leftButton");
         _mousePosition.AddBinding("<Mouse>/position");
+
+        player = GetComponent<Player>();
     }
 
     private void OnEnable()
@@ -67,6 +71,7 @@ public class InputHandler : NetworkBehaviour
 
     private void Update()
     {
+        if (!player.gameReady.Value) return;
         //solo se ejecuta este update en todo player
         if (IsLocalPlayer)
         {
@@ -89,7 +94,6 @@ public class InputHandler : NetworkBehaviour
             if (firePerformed) { Fire(screenPoint); }
 
             HookRender(CachedMoveInput);
-
         }
     }
 

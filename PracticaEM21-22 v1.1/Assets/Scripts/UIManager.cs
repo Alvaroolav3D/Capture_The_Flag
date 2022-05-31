@@ -6,8 +6,9 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using System.Text;
 using TMPro;
+using Unity.Netcode;
 
-public class UIManager : MonoBehaviour
+public class UIManager : NetworkBehaviour
 {
 
     #region Variables
@@ -48,6 +49,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject readyMenu;
     [SerializeField] private InputField inputFieldPlayerName;
     [SerializeField] private Button buttonReady;
+    string playerName;
 
     [Header("In-Game HUD")]
     [SerializeField] private GameObject inGameHUD;
@@ -148,15 +150,41 @@ public class UIManager : MonoBehaviour
         clientMenu.SetActive(false);
         backMenu.SetActive(false);
 
-        SetPlayerName();
-
+        TryGameStart();
+        
         readyMenu.SetActive(false);
         inGameHUD.SetActive(true);
     }
+    public void TryGameStart()
+    {
+        var players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject client;
+
+        foreach (GameObject p in players)
+        {
+            if (p.GetComponent<NetworkObject>().OwnerClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                client = p;
+                client.GetComponent<Player>().UpdatePlayerIsReadyServerRpc(true);
+            }
+        }
+    }
+
+    //[ServerRpc]
+    //public void GameIsReadyServerRpc()
+    //{
+    //    var players = GameObject.FindGameObjectsWithTag("Player");
+    //    foreach (GameObject player in players)
+    //    {
+    //        print("hey");
+    //        player.GetComponent<Player>().UpdateGameReadyServerRpc(true);
+    //    }
+    //    gameManager.startTimer = true;
+    //}
 
     public void SetPlayerName()
     {
-        var playerName = inputFieldPlayerName.text;
+        playerName = inputFieldPlayerName.text;
     }
 
     public void UpdateLifeUI(int hitpoints)

@@ -11,6 +11,8 @@ public class Player : NetworkBehaviour
     // https://docs-multiplayer.unity3d.com/netcode/current/basics/networkvariable
     public NetworkVariable<PlayerState> State;
     public NetworkVariable<PlayerLiveState> LiveState;
+    public NetworkVariable<bool> isReady;
+    public NetworkVariable<bool> gameReady;
     
     #endregion
 
@@ -23,6 +25,8 @@ public class Player : NetworkBehaviour
 
         State = new NetworkVariable<PlayerState>();
         LiveState = new NetworkVariable<PlayerLiveState>();
+        isReady = new NetworkVariable<bool>();
+        gameReady = new NetworkVariable<bool>();
     }
 
     private void OnEnable()
@@ -33,6 +37,8 @@ public class Player : NetworkBehaviour
         // https://docs-multiplayer.unity3d.com/netcode/current/api/Unity.Netcode.NetworkVariable-1.OnValueChangedDelegate
         State.OnValueChanged += OnPlayerStateValueChanged;
         LiveState.OnValueChanged += OnPlayerLiveStateValueChanged;
+        isReady.OnValueChanged += OnPlayerIsReadyValueChanged;
+        gameReady.OnValueChanged += OnGameReadyValueChanged;
     }
 
     private void OnDisable()
@@ -40,6 +46,8 @@ public class Player : NetworkBehaviour
         // https://docs-multiplayer.unity3d.com/netcode/current/api/Unity.Netcode.NetworkVariable-1.OnValueChangedDelegate
         State.OnValueChanged -= OnPlayerStateValueChanged;
         LiveState.OnValueChanged -= OnPlayerLiveStateValueChanged;
+        isReady.OnValueChanged -= OnPlayerIsReadyValueChanged;
+        gameReady.OnValueChanged -= OnGameReadyValueChanged;
     }
 
     #endregion
@@ -62,6 +70,8 @@ public class Player : NetworkBehaviour
         //le doy un valor inicial al jugador de Grounded
         UpdatePlayerStateServerRpc(PlayerState.Grounded);
         UpdatePlayerLiveStateServerRpc(PlayerLiveState.Alive);
+        UpdatePlayerIsReadyServerRpc(false);
+        UpdateGameReadyServerRpc(false);
     }
 
     void ConfigureCamera()
@@ -96,6 +106,16 @@ public class Player : NetworkBehaviour
     {
         LiveState.Value = state;
     }
+    [ServerRpc]
+    public void UpdatePlayerIsReadyServerRpc(bool ready)
+    {
+        isReady.Value = ready;
+    }
+    [ServerRpc]
+    public void UpdateGameReadyServerRpc(bool ready)
+    {
+        gameReady.Value = ready;
+    }
 
     #endregion
 
@@ -112,6 +132,15 @@ public class Player : NetworkBehaviour
     void OnPlayerLiveStateValueChanged(PlayerLiveState previous, PlayerLiveState current)
     {
         LiveState.Value = current;
+    }
+
+    void OnPlayerIsReadyValueChanged(bool previous, bool current)
+    {
+        isReady.Value = current;
+    }
+    void OnGameReadyValueChanged(bool previous, bool current)
+    {
+        gameReady.Value = current;
     }
 
     #endregion
