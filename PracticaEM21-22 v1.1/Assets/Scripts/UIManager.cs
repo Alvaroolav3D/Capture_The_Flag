@@ -325,7 +325,7 @@ public class UIManager : NetworkBehaviour
         Vector3 position = gameManager.spawnPoints[Random.Range(0, gameManager.spawnPoints.Count - 1)].position; 
 
         //callback del delegado ConnectionApprovedDelegate que instancia al jugador si los requisitos se cumplen
-        callback(emptyPlaceInGame, null, approveConnection, position, null); 
+        callback(emptyPlaceInGame, null, approveConnection, position, null);
     }
     #endregion
 }

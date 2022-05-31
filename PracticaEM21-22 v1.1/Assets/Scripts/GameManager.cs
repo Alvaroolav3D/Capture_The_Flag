@@ -82,6 +82,7 @@ public class GameManager : NetworkBehaviour
             var players = GameObject.FindGameObjectsWithTag("Player");
             foreach (GameObject player in players)
             {
+                if(IsOwner) //solo el owner puede proponer un cambio en una networkvariable
                 player.GetComponent<Player>().UpdateGameReadyServerRpc(false);
             }
             uIManager.ActivateStatsMenu();
